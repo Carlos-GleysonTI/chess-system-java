@@ -1,11 +1,15 @@
 package application;
 
+import boardgame.Position;
+
 public class Progam {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println("Hello word g!");
 
+		Position p = new Position(1, 1);
+		
+		System.out.println(p);
 	}
 
 }
