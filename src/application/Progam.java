@@ -1,8 +1,11 @@
 package application;
 
+import java.util.Scanner;
+
 import boardgame.Board;
 import chess.ChessMatch;
 import chess.ChessPiece;
+import chess.ChessPosition;
 
 
 public class Progam {
@@ -10,9 +13,26 @@ public class Progam {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
+		
+		while(true) {
 		UI.printBoard(chessMatch.getPieces());
 		
+		//posição de origem
+		System.out.println();
+		System.out.print("Source: ");
+		ChessPosition source = UI.readChessPosition(sc);
+		
+		//posi de destino
+		System.out.println();
+		System.out.print("Target: ");
+		ChessPosition target = UI.readChessPosition(sc);
+		
+		//chamada
+		ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+		
+		}
 	}
 
 }
