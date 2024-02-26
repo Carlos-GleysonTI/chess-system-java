@@ -28,8 +28,13 @@ public class Position {
 		this.column = column;
 	}
 	
+	public void setValues(int row, int column) {//recebendo novos valores
+		this.row = row;
+		this.column = column;
+	}
 	@Override
 	public String toString() {
 		return row + ", " + column;// o que vai ser impresso
 	}
+	
 }
