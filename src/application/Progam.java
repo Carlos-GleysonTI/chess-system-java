@@ -31,6 +31,10 @@ public class Progam {
 				System.out.print("Source: ");
 				ChessPosition source = UI.readChessPosition(sc);
 				
+				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
+				UI.clearScreen();// limpar a tela
+				UI.printBoard(chessMatch.getPieces(), possibleMoves);
+				
 				//posi de destino
 				System.out.println();
 				System.out.print("Target: ");
