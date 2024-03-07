@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -13,12 +16,19 @@ public class ChessMatch {
 	private int turn;//vez
 	private Color currentPlayer; //jogador atual
 	private Board board;
+							
+	//private List<ChessPiece> piecesOnTheBoard = new ArrayList<>();// lista de peças no tabuleiros
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();// lista de peças no tabuleiros
+	//private List<ChessPiece> piecesOnTheBoard ;
+	private List<Piece> capturedPieces  = new ArrayList<>();// lista de Peças capturadas
+	//private List<ChessPiece> capturedPieces  = new ArrayList<>();// lista de Peças capturadas
 
 	//iniciando as variáveis
 	public ChessMatch() {
 		// TODO Auto-generated constructor stub
 		board = new Board(8, 8);
 		turn = 1;
+		//piecesOnTheBoard = new ArrayList<>();//posso iniciar ela aqui tambem no Contrustor
 		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
@@ -72,6 +82,11 @@ public class ChessMatch {
 		Piece p = board.removePiece(source);
 		Piece capturedPiece = board.removePiece(target);
 		board.placePiece(p, target);
+		
+		if (capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.add(capturedPiece);
+		}
 		return capturedPiece;
 	}
 	
@@ -102,8 +117,11 @@ public class ChessMatch {
 		turn ++;
 		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
+	
+	//coloque nova peça
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
+		piecesOnTheBoard.add(piece);
 	}
 
 	private void initialSetup() {
