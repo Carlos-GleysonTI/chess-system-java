@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -16,6 +17,7 @@ public class ChessMatch {
 	private int turn;//vez
 	private Color currentPlayer; //jogador atual
 	private Board board;
+	private boolean check;//verificar//boolean por padrão começa com falso
 							
 	//private List<ChessPiece> piecesOnTheBoard = new ArrayList<>();// lista de peças no tabuleiros
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();// lista de peças no tabuleiros
@@ -28,6 +30,7 @@ public class ChessMatch {
 		// TODO Auto-generated constructor stub
 		board = new Board(8, 8);
 		turn = 1;
+		//check = false;// seqiser iniciar aqui 
 		//piecesOnTheBoard = new ArrayList<>();//posso iniciar ela aqui tambem no Contrustor
 		currentPlayer = Color.WHITE;
 		initialSetup();
@@ -41,6 +44,11 @@ public class ChessMatch {
 	
 	public Color getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public boolean getCheck() {
+		return check;// pq faço os metodos gets das minhas variáveis 
+					// para poder pegar elas em outras classes de outros pacotes 
 	}
 
 	public ChessPiece[][] getPieces() {
@@ -73,14 +81,24 @@ public class ChessMatch {
 		Piece capturedPiece = makeMove(source, target);
 		//depois q eu executar uma jogada chamo metodo de jogador por vez 
 		
+		//se jogador atual ficou em cheque
+		if(testCheck(currentPlayer)) {
+			//desmove uma peça
+			undoMove(source, target, capturedPiece);
+			throw new ChessException("You can´t put yourself in check");//Você não pode se colocar em cheque
+		}
+		
+		//se o oponente do jogador atual estiver em cheque verdadeiro se não falso
+		check = (testCheck(opponent(currentPlayer))) ? true : false;
+		
 		nextTurn();//jogador por vez 
 		return (ChessPiece) capturedPiece;
 	}
 	
 	//metodo mover 
 	private Piece makeMove(Position source, Position target) {//recebendo posição de origem e destino
-		Piece p = board.removePiece(source);
-		Piece capturedPiece = board.removePiece(target);
+		Piece p = board.removePiece(source);//tirando a peça de origem
+		Piece capturedPiece = board.removePiece(target);//colocando peça destino
 		board.placePiece(p, target);
 		
 		if (capturedPiece != null) {
@@ -88,6 +106,18 @@ public class ChessMatch {
 			capturedPieces.add(capturedPiece);
 		}
 		return capturedPiece;
+	}
+	
+	//Metodo desfazer movimento é ao contrário mover
+	private void  undoMove(Position source, Position target, Piece captured) {
+		Piece p = board.removePiece(target);//tirando a peça de destino
+		Piece capturedPiece = board.removePiece(source);//colocando peça origem
+		
+		if (capturedPiece != null) {
+			board.placePiece(capturedPiece, target);//
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.add(capturedPiece);
+		}
 	}
 	
 	//metodo de validação
@@ -117,7 +147,38 @@ public class ChessMatch {
 		turn ++;
 		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
+	//adivesário
+	private Color opponent(Color color) {
+		//se
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
 	
+	private ChessPiece king(Color color) {
+		//pq eu usei dowlcast (ChessPiece) pq a color esta na ChessPiece
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color).collect(Collectors.toList());
+		
+		//vamos percorrer a lista
+		for(Piece p : list) {
+			if(p instanceof King) {
+				return (ChessPiece)p;
+			}
+		}
+		throw new IllegalStateException("There is no" + color + " king on the board");
+	}
+	
+	//Verificação de teste
+	private boolean testCheck(Color color) {
+		Position kingPosition = king(color).getChessPosition().toPosition();
+		List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == opponent(color)).collect(Collectors.toList());
+	
+		for (Piece p : opponentPieces) {
+			boolean[][] mat = p.possibleMoves();//possilveis movimentos
+			if(mat[kingPosition.getRow()][kingPosition.getColumn()]) {
+				return true;
+			}
+		}
+		return false;
+	}
 	//coloque nova peça
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());

@@ -3,6 +3,7 @@ package application;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 import boardgame.Board;
@@ -17,6 +18,7 @@ public class Progam {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
 		List<ChessPiece> captured = new ArrayList<>();

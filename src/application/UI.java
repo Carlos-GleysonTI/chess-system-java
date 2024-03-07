@@ -59,6 +59,7 @@ public class UI {
 		}
 	}
 
+	//Imprimir a partida 
 	public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
 		printBoard(chessMatch.getPieces());
 		System.out.println();
@@ -66,6 +67,11 @@ public class UI {
 		System.out.println();
 		System.out.println("Turn : " + chessMatch.getTurn());
 		System.out.println("Waitin player: " + chessMatch.getCurrentPlayer());
+		
+		//se minha partida estiver em check mand uma msg Alertando
+		if(chessMatch.getCheck()) {
+			System.out.println("CHECK!");
+		}
 	}
 	public static void printBoard(ChessPiece[][] pieces) {
 
