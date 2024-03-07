@@ -24,7 +24,8 @@ public class Progam {
 		
 				UI.clearScreen();//metodo limpar a tela
 				
-				UI.printBoard(chessMatch.getPieces());
+				//UI.printBoard(chessMatch.getPieces());
+				UI.printMatch(chessMatch);
 				
 				//posição de origem
 				System.out.println();
