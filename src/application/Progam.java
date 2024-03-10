@@ -23,7 +23,9 @@ public class Progam {
 		ChessMatch chessMatch = new ChessMatch();
 		List<ChessPiece> captured = new ArrayList<>();
 		
-		while(true) {
+		//while(true) {
+		//enquanto a partida não estiver em cheque marte
+		while(!chessMatch.getCheckMate()) {
 			
 			try {
 		
@@ -64,6 +66,11 @@ public class Progam {
 			}
 		
 		}
+		
+		//limpar a tela
+		UI.clearScreen();
+		//mostra resultado
+		UI.printMatch(chessMatch, captured);
 	}
 
 }
