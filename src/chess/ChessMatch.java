@@ -10,6 +10,7 @@ import boardgame.Position;
 import chess.pieces.Bishop;
 //import boardgame.Position;
 import chess.pieces.King;
+import chess.pieces.Knight;
 import chess.pieces.Pawn;
 import chess.pieces.Rook;
 
@@ -78,69 +79,46 @@ public class ChessMatch {
 	
 	//executar movimento de xadrez ou jogada
 	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
-		//converter
 		Position source = sourcePosition.toPosition();
 		Position target = targetPosition.toPosition();
-		
 		validateSourcePosition(source);
 		validateTargetPosition(source, target);
-		
 		Piece capturedPiece = makeMove(source, target);
-		//depois q eu executar uma jogada chamo metodo de jogador por vez 
 		
-		//se jogador atual ficou em cheque
-		if(testCheck(currentPlayer)) {
-			//desmove uma peça
+		if (testCheck(currentPlayer)) {
 			undoMove(source, target, capturedPiece);
-			throw new ChessException("You can´t put yourself in check");//Você não pode se colocar em cheque
+			throw new ChessException("You can't put yourself in check");
 		}
 		
-		//se o oponente do jogador atual estiver em cheque verdadeiro se não falso
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 		
-		//testar se jogo acabou
-		//se o oponente da peça q mexeu ficou em cheque mate 
-		if (testCheckMate(opponent(currentPlayer))) {
-			checkMate = true;
-		}
-		else {
-			nextTurn();//jogador da vez
-		}
-		return (ChessPiece) capturedPiece;
+		nextTurn();
+		return (ChessPiece)capturedPiece;
 	}
 	
 	//metodo mover 
-	private Piece makeMove(Position source, Position target) {//recebendo posição de origem e destino
-		
-		//Piece p = board.removePiece(source);//tirando a peça de origem
-		ChessPiece p = (ChessPiece)board.removePiece(source);//tirando a peça de origem
-		
-		p.increaseMoveCount();
-		
-		Piece capturedPiece = board.removePiece(target);//colocando peça destino
+	private Piece makeMove(Position source, Position target) {
+		Piece p = board.removePiece(source);
+		Piece capturedPiece = board.removePiece(target);
 		board.placePiece(p, target);
 		
 		if (capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
 			capturedPieces.add(capturedPiece);
 		}
+		
 		return capturedPiece;
 	}
 	
 	//Metodo desfazer movimento é ao contrário mover
-	private void  undoMove(Position source, Position target, Piece captured) {
-		
-		//Piece p = board.removePiece(target);//tirando a peça de destino
-		ChessPiece p = (ChessPiece)board.removePiece(target);//tirando a peça de destino
-		
-		p.decreaseMoveCount();
-		
-		Piece capturedPiece = board.removePiece(source);//colocando peça origem
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		Piece p = board.removePiece(target);
+		board.placePiece(p, source);
 		
 		if (capturedPiece != null) {
-			board.placePiece(capturedPiece, target);//
-			piecesOnTheBoard.remove(capturedPiece);
-			capturedPieces.add(capturedPiece);
+			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
 		}
 	}
 	
@@ -294,9 +272,11 @@ public class ChessMatch {
         placeNewPiece('a', 8, new King(board, Color.BLACK));*/
 		
 		placeNewPiece('a', 1, new Rook(board, Color.WHITE));
+		placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('e', 1, new King(board, Color.WHITE));
 		placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
+		placeNewPiece('g', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('h', 1, new Rook(board, Color.WHITE));
 		placeNewPiece('a', 2, new Pawn(board, Color.WHITE));
 		placeNewPiece('b', 2, new Pawn(board, Color.WHITE));
@@ -308,9 +288,11 @@ public class ChessMatch {
 		placeNewPiece('h', 2, new Pawn(board, Color.WHITE));
 		
 		placeNewPiece('a', 8, new Rook(board, Color.BLACK));
+		placeNewPiece('b', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('e', 8, new King(board, Color.BLACK));
 		placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
+		placeNewPiece('g', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('h', 8, new Rook(board, Color.BLACK));
 		placeNewPiece('a', 7, new Pawn(board, Color.BLACK));
 		placeNewPiece('b', 7, new Pawn(board, Color.BLACK));
